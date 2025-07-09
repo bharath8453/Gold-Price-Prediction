@@ -78,12 +78,3 @@ Gold prices are influenced by various factors like stock market indices, currenc
 
 ---
 
-## 🙋‍♂️ Author
-
-**Akash C**  
-📍 Coimbatore  
-📧 akashchinnaswamy2712@gmail.com  
-🔗 [LinkedIn](https://www.linkedin.com/in/akash-c-) | [GitHub](https://github.com/Akashchinnaswamy2712)
-
----
-
