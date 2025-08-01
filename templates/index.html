@@ -1,41 +1,89 @@
-from flask import Flask, render_template, request
-import numpy as np
-import pickle
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gold Rate Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-# Load trained model
-with open('regressor.pkl', 'rb') as f:
-    regressor = pickle.load(f)
+        form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 400px;
+        }
 
-# Optional: Load LinearRegression if you want to compare or switch models
-with open('clf.pkl', 'rb') as f:
-    clf = pickle.load(f)
+        h2 {
+            text-align: center;
+            color: #333;
+        }
 
-app = Flask(__name__)
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    try:
-        # Field names from form (note: HTML input name for EUR/USD should be EUR_USD)
-        field_names = ['SPX', 'USO', 'SLV', 'EUR_USD']
-        form_data = {field: request.form[field] for field in field_names}
-        features = [float(form_data[field]) for field in field_names]
-        input_array = np.array(features).reshape(1, -1)
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-        # Predict using RandomForest (no transform needed)
-        prediction = regressor.predict(input_array)
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
 
-        # You can switch to LinearRegression if you want:
-        # prediction = clf.predict(input_array)
+        h3 {
+            text-align: center;
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post" action="/predict">
+        <h2>Gold Rate Prediction</h2>
 
-        result = f"Predicted Gold Price: {prediction[0]:.2f}"
-        return render_template('index.html', prediction_text=result, form_data=form_data)
+        <label for="spx">S&P 500:</label>
+        <input type="text" name="SPX" id="spx" placeholder="e.g., 1447.16" value="{{ form_data.SPX if form_data else '' }}">
 
-    except Exception as e:
-        return render_template('index.html', prediction_text=f'Error: {str(e)}')
+        <label for="uso">United States Oil Fund (USO):</label>
+        <input type="text" name="USO" id="uso" placeholder="e.g., 78.47" value="{{ form_data.USO if form_data else '' }}">
 
-if __name__ == '__main__':
-    app.run(debug=True)
+        <label for="slv">iShares Silver Trust (SLV):</label>
+        <input type="text" name="SLV" id="slv" placeholder="e.g., 15.18" value="{{ form_data.SLV if form_data else '' }}">
+
+        <label for="eurusd">EUR to USD Exchange Rate:</label>
+        <input type="text" name="EUR_USD" id="eurusd" placeholder="e.g., 1.471692" value="{{ form_data.EUR_USD if form_data else '' }}">
+
+        <input type="submit" value="Predict">
+
+        {% if prediction_text %}
+            <h3>{{ prediction_text }}</h3>
+        {% endif %}
+    </form>
+</body>
+</html>
